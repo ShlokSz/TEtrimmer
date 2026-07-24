@@ -91,7 +91,8 @@ TEtrimmer_version = "1.7.4"
     '-i',
     default=None,
     type=str,
-    help='Path to TE consensus library file (FASTA format). Use the output from RepeatModeler, EDTA, REPET, et al.',
+    help='Path to TE consensus library file (FASTA format). Use the output from RepeatModeler, EDTA, REPET, et al. '
+         'Skip this option if you want to do de-novo TE annotation with TEtrimmer.',
 )
 @click.option(
     '--genome_file',
@@ -812,7 +813,7 @@ def main(
                 )
                 os.makedirs(curatedlib_dir, exist_ok=True)
                 curatedlib_check = eliminate_curatedlib_by_repeatmasker(
-                    curatedlib, input_file, curatedlib_dir
+                    curatedlib, input_file, curatedlib_dir, num_threads=num_threads
                 )
 
                 if curatedlib_check:
