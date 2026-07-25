@@ -2350,9 +2350,11 @@ def eliminate_curatedlib_by_repeatmasker(
                 else:
                     merged.append((start, end))
             total_cov = sum(end - start for start, end in merged)
+            best = group.loc[group['cov_query_len'].idxmax(), 'repeat_name']
             return pd.Series({
                 'total_cov_len': total_cov,
                 'query_len': group['query_len'].iloc[0],
+                'longest_curated_match': best,
             })
 
         grouped = df.groupby('query_name', sort=False).apply(merge_intervals, include_groups=False)
