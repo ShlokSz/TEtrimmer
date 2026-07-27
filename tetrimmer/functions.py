@@ -2953,6 +2953,36 @@ def run_repeatmodeler(genome_fasta, outdir, threads, continue_analysis=False):
     logging.error(f"All attempts for running RepeatModeler failed. Logs: {tool_log_path}\n")
     return False
 
+def clean_ltr_type_sequences(input_fasta):
+    """
+    Remove FASTA entries with 'Type=LTR' in the header.
+    Writes a new file named <input>_LTR_cleaned.fa next to the original.
+    """
+    base, ext = os.path.splitext(input_fasta)
+    output_fasta = f"{base}_LTR_cleaned{ext}"
+
+    removed = 0
+    kept = 0
+    skip = False
+
+    with open(input_fasta) as f_in, open(output_fasta, "w") as f_out:
+        for line in f_in:
+            if line.startswith(">"):
+                skip = "Type=LTR" in line
+                if skip:
+                    removed += 1
+                else:
+                    kept += 1
+                    f_out.write(line)
+            elif not skip:
+                f_out.write(line)
+
+    logging.info(
+        f"Removed {removed} LTR-type sequences, kept {kept} sequences."
+        f"Cleaned file: {output_fasta}"
+    )
+    return output_fasta
+
 
 def check_terminal_repeat(
     input_file, output_dir, teaid_blast_out=None, TIR_adj=2000, LTR_adj=3000

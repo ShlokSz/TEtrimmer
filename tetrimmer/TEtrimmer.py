@@ -22,7 +22,8 @@ from functions import (
     repeatmasker,
     check_tools,
     init_logging,
-    run_repeatmodeler
+    run_repeatmodeler,
+    clean_ltr_type_sequences
 )
 
 # Suppress all deprecation warnings
@@ -742,7 +743,7 @@ def main(
 
             # Check if the RepeatModeler finished
             if os.path.isfile(repeatmodeler_out_lib_expect):
-                input_file = repeatmodeler_out_lib_expect
+                input_file = clean_ltr_type_sequences(repeatmodeler_out_lib_expect)
 
                 continue_analysis = False
                 de_novo_TE_anno = True
@@ -757,7 +758,7 @@ def main(
                 )
 
                 if repeatmodeler_out_lib:
-                    input_file = repeatmodeler_out_lib
+                    input_file = clean_ltr_type_sequences(repeatmodeler_out_lib)
                     continue_analysis = False
                     de_novo_TE_anno = True
                 else:
@@ -779,7 +780,7 @@ def main(
             repeatmodeler_out_lib = run_repeatmodeler(cleaned_genome_file, repeatmodeler_out_dir, threads=num_threads)
 
             if repeatmodeler_out_lib:
-                input_file = repeatmodeler_out_lib
+                input_file = clean_ltr_type_sequences(repeatmodeler_out_lib)
 
                 de_novo_TE_anno = True
 
