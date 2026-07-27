@@ -2929,6 +2929,20 @@ def run_repeatmodeler(genome_fasta, outdir, threads, continue_analysis=False):
 
             if os.path.exists(expected_output):
                 logging.info(f"RepeatModeler finished. Library generated at {expected_output}")
+
+                # After successful RepeatModeler run, clean up orphaned RM_* temp directories
+                rm_dirs = sorted(
+                    [d for d in glob.glob(os.path.join(outdir, "RM_*")) if os.path.isdir(d)],
+                    key=os.path.getmtime
+                )
+                if rm_dirs:
+                    # Keep the most recent one (the successful run), remove the rest
+                    for stale_dir in rm_dirs[:-1]:
+                        shutil.rmtree(stale_dir, ignore_errors=True)
+                    logging.info(
+                        f"Cleaned up {len(rm_dirs) - 1} stale RM_* directories from failed RepeatModeler attempts."
+                    )
+
                 shutil.copy2(expected_output, repeatmodeler_out_file)
                 return repeatmodeler_out_file
 
